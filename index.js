@@ -8,11 +8,23 @@ exports.initialize = function(passport) {
   return function *(next) {
     var req = this.req
     var session = req.session || this.session
-    req._passport = {
-      session: session && session[passport._key] || {}
-    }
-    req._passport.instance = passport;
+
+    // to ensuer request has a session
     req.session = session
+
+    req._passport = { instance: passport }
+
+    if (session && session[passport._key]) {
+      // load data from existing session
+      req._passport.session = session[passport._key];
+    } else if (session) {
+      // initialize new session
+      session[passport._key] = {};
+      req._passport.session = session[passport._key];
+    } else {
+      // no session is available
+      req._passport.session = {};
+    }
     yield next
   }
 }
