@@ -1,6 +1,6 @@
 {
   "name": "koa-passport-fw",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Passport authenticator framework for koajs",
   "main": "index.js",
   "scripts": {
