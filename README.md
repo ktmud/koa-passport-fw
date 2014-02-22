@@ -57,6 +57,7 @@ passport.deserializeUser(function(id, done) {
   // callback style code is still working
   User.find(id, done)
 })
+```
 
 
 See it in action:
@@ -93,6 +94,11 @@ app.use(function *authPOST(next) {
 })
 
 ```
+
+
+### Credit
+
+You may also wanna try [rkusa/koa-passport](https://github.com/rkusa/koa-passport).
 
 
 ## License

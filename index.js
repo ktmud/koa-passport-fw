@@ -1,7 +1,8 @@
 /**
  * Passport Framework for koa
  */
-var _authenticate = require('passport/lib/middleware/authenticate')
+
+var authenticate = require('passport')._framework.authenticate
 
 exports.initialize = function(passport) {
   return function *(next) {
@@ -17,16 +18,81 @@ exports.initialize = function(passport) {
 }
 
 
-exports.authenticate = function(passport, strategy, options, callback) {
+function isRedirected(res) {
+  return res.status < 400 && res.status >= 300
+}
 
-  var middleware = _authenticate(passport, strategy, options, callback)
 
-  function authenticate(next) {
-    middleware(this.req, this.res, next)
+exports.authenticate = function(passport, strategy, options) {
+  options = options || {}
+
+  var middleware = authenticate.bind(this, passport, strategy, options)
+
+  function auth(next) {
+    function cb(err, user, info, failure) {
+      next(err, {
+        user: user,
+        info: info,
+        failure: failure
+      })
+    }
+    middleware(cb)(this.req, this.res, next)
+  }
+
+  function login(user) {
+    return function(next) {
+      this.req.logIn(user, options, next)
+    }
+  }
+
+  function transformAuthInfo(info) {
+    return function(next) {
+      passport.transformAuthInfo(info, this.req, next)
+    }
   }
 
   return function *(next) {
-    yield authenticate
-    if (next) yield next
+    var result = yield auth
+
+    // no result means this strategy is passed
+    if (!result) {
+      if (next) yield next
+      return
+    }
+
+    var req = this.req
+    var user = result.user
+    if (user === false) {
+      if (options.failureRedirect) {
+        this.redirect(options.failureRedirect);
+      } else {
+        this.status = 401
+      }
+      return
+    }
+
+    if (options.assignProperty) {
+      req[options.assignProperty] = user;
+    } else {
+      yield login(user)
+      if (options.authInfo !== false) {
+        req.authInfo = yield transformAuthInfo(result.info);
+      }
+      if (options.successReturnToOrRedirect) {
+        var url = options.successReturnToOrRedirect;
+        if (this.session && this.session.returnTo) {
+          url = this.session.returnTo;
+          delete this.session.returnTo;
+        }
+        return this.redirect(url);
+      }
+      if (options.successRedirect) {
+        return this.redirect(options.successRedirect);
+      }
+    }
+
+    if (next) {
+      yield next
+    }
   }
 }
