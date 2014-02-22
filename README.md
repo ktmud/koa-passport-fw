@@ -3,6 +3,7 @@
 [Passport](https://github.com/jaredhanson/passport) support to [koajs](http://koajs.com/),
 with passport's great framework mechanism.
 
+Passport >= 0.2.0 needed.
 
 ## Usage
 
