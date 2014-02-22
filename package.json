@@ -1,0 +1,24 @@
+{
+  "name": "koa-passport-fw",
+  "version": "0.0.1",
+  "description": "Passport authenticator framework for koajs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ktmud/koa-passport-fw"
+  },
+  "keywords": [
+    "passport",
+    "authenticate",
+    "koajs"
+  ],
+  "author": "ktmud <kissmud@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ktmud/koa-passport-fw/issues"
+  },
+  "homepage": "https://github.com/ktmud/koa-passport-fw"
+}
