@@ -61,7 +61,16 @@ User.find = function(id, done) {
   done(new User({ id: id }))
 }
 
-User.get = co(User.find)
+// the easiest way to wrap an
+// async funtion to be "yieldable"
+User.get = function getUser(id) {
+  return function(next) {
+    User.find(id, next)
+  }
+}
+
+// or use require('thunkify')
+// User.get = thunkify(User.find)
 
 User.getByPassword = function* getByPassword(uid, password) {
   var user = yield User.get(uid)
