@@ -47,16 +47,49 @@ LocalStrategy.prototype.authenticate = function(req, options) {
   })
 }
 
-// The User.getByPassword is an generator function, so we wrap it with `co`
+/**
+ * User model constructor
+ */
+function User() {
+}
+
+User.find = function(id, done) {
+  //
+  // to get user from database
+  // Use ORMs or run a SQL directly
+  //
+  done(new User({ id: id }))
+}
+
+User.get = co(User.find)
+
+User.getByPassword = function* getByPassword(uid, password) {
+  var user = yield User.get(uid)
+  if (!user) {
+    console.log('user "%s" doesnt exit', uid)
+    return false
+  }
+  var ok = yield user.comparePassword(password)
+  if (!ok) {
+    console.log('user "%s" password missmatch.', uid)
+    return false
+  }
+  return user
+}
+
+// The User.getByPassword is a generator function, so we wrap it with `co`
 passport.use(new LocalStrategy(co(User.getByPassword)))
 
 passport.serializeUser(function(user, done) {
   done(null, user.id)
 })
+
 passport.deserializeUser(function(id, done) {
-  // callback style code is still working
+  // callback style still works
   User.find(id, done)
 })
+// or:
+// passport.deserializeUser(co(User.get))
 ```
 
 
