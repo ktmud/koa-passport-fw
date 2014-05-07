@@ -2,7 +2,7 @@
  * Passport Framework for koa
  */
 
-var authenticate = require('passport')._framework.authenticate
+var fw_authenticate = require('passport')._framework.authenticate
 
 exports.initialize = function(passport) {
   return function *(next) {
@@ -38,7 +38,7 @@ function isRedirected(res) {
 exports.authenticate = function(passport, strategy, options) {
   options = options || {}
 
-  var middleware = authenticate.bind(this, passport, strategy, options)
+  var middleware = fw_authenticate.bind(this, passport, strategy, options)
 
   function auth(next) {
     function cb(err, user, info, failure) {
@@ -63,7 +63,7 @@ exports.authenticate = function(passport, strategy, options) {
     }
   }
 
-  return function *(next) {
+  return function* authenticate(next) {
     var result = yield auth
 
     // no result means this strategy is passed
