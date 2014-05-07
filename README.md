@@ -5,6 +5,10 @@ with passport's great framework mechanism.
 
 Passport >= 0.2.0 needed.
 
+### @DEPRECATED
+
+This project is deprecated, try [koa-passport](rkusa/koa-passport) instead.
+
 ## Usage
 
 ```javascript
